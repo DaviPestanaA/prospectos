@@ -5,22 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Prospectos</title>
   <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-  <noscript>Ative o JavaScript para ver este app.</noscript>
-  <style>html{visibility:hidden}</style>
+
+  <!-- CSS na RAIZ -->
+  <link rel="stylesheet" href="./index-DYx4jXYy.css" />
 </head>
 <body>
-  <!-- container que o bundle deve usar -->
+  <!-- Cria os contêineres mais comuns para garantir compatibilidade -->
   <div id="root"></div>
+  <div id="app" style="display:none"></div>
+  <div id="manus-root" style="display:none"></div>
 
-  <script>
-    (function () {
-      // base correta mesmo em /usuario/repositorio/
-      var p = location.pathname;
-      var base = p.endsWith('/') ? p : p.slice(0, p.lastIndexOf('/') + 1);
+  <!-- Carrega o bundle DEPOIS do DOM (evita React #299) -->
+  <script type="module">
+    // deixe só um contêiner visível; os demais ficam disponíveis caso o bundle use outro id
+    document.getElementById('app').innerHTML = '';
+    document.getElementById('manus-root').innerHTML = '';
+    document.getElementById('root').innerHTML = '';
 
-      // injeta CSS (com cache-busting) e revela a página
-      var css = document.createElement('link');
-      css.rel = 'stylesheet';
-      css.href = base + 'index-DYx4jXYy.css?v=' + Date.now();
-      css.onload = function(){ document.documentElement.style.visibility = 'visible'; };
-      css.onerror = function(){ document.documentElement.style.visibility = 'visible'; };
+    import('./index-CFG82D6X.js')
+      .then(() => console.log('[ok] bundle carregado'))
+      .catch(err => console.error('[erro] ao importar bundle', err));
+  </script>
+</body>
+</html>
