@@ -6,25 +6,41 @@
   <title>Prospectos</title>
   <link rel="icon" type="image/x-icon" href="./favicon.ico" />
 
-  <!-- CSS na RAIZ -->
-  <link rel="stylesheet" href="./index-DYx4jXYy.css" />
+  <!-- CSS na RAIZ (com cache-busting) -->
+  <link rel="stylesheet" href="./index-DYx4jXYy.css?v=<?=Date.now()?>">
+
+  <style>
+    /* Mensagem mínima enquanto carrega */
+    #root { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 16px; }
+  </style>
 </head>
 <body>
-  <!-- Cria os contêineres mais comuns para garantir compatibilidade -->
-  <div id="root"></div>
-  <div id="app" style="display:none"></div>
-  <div id="manus-root" style="display:none"></div>
+  <!-- Contêiner esperado pelo bundle -->
+  <div id="root">Carregando…</div>
 
-  <!-- Carrega o bundle DEPOIS do DOM (evita React #299) -->
+  <!-- Logs de diagnóstico -->
+  <script>
+    window.addEventListener('error', e => console.error('[window.error]', e.message, e.filename, e.lineno, e));
+    window.addEventListener('unhandledrejection', e => console.error('[unhandledrejection]', e.reason));
+    console.log('[debug] index.html carregado em', location.href);
+  </script>
+
+  <!-- Importa o bundle da RAIZ (com cache-busting) e garante #root vazio -->
   <script type="module">
-    // deixe só um contêiner visível; os demais ficam disponíveis caso o bundle use outro id
-    document.getElementById('app').innerHTML = '';
-    document.getElementById('manus-root').innerHTML = '';
-    document.getElementById('root').innerHTML = '';
+    const root = document.getElementById('root');
+    if (!root) {
+      const el = document.createElement('div');
+      el.id = 'root';
+      document.body.appendChild(el);
+      console.log('[debug] #root foi criado');
+    } else {
+      root.innerHTML = ''; // React createRoot exige vazio
+    }
 
-    import('./index-CFG82D6X.js')
-      .then(() => console.log('[ok] bundle carregado'))
-      .catch(err => console.error('[erro] ao importar bundle', err));
+    console.log('[debug] importando bundle…');
+    import('./index-CFG82D6X.js?v=' + Date.now())
+      .then(() => console.log('[debug] bundle importado OK'))
+      .catch(err => console.error('[debug] erro ao importar bundle', err));
   </script>
 </body>
 </html>
