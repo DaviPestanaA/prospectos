@@ -5,42 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Prospectos</title>
   <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+  <base href="./">
+  <noscript>Ative o JavaScript para ver este app.</noscript>
 
-  <!-- CSS na RAIZ (com cache-busting) -->
-  <link rel="stylesheet" href="./index-DYx4jXYy.css?v=<?=Date.now()?>">
-
+  <!-- CSS na raiz (troque o nome se o seu for outro) -->
+  <link rel="stylesheet" href="./index-DYx4jXYy.css?v=2" />
   <style>
-    /* Mensagem mínima enquanto carrega */
-    #root { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 16px; }
+    html,body{height:100%} body{margin:0}
+    /* fallback visual mínimo antes do React montar */
+    #root{min-height:100%; display:flex; align-items:center; justify-content:center; font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:#444}
   </style>
 </head>
 <body>
-  <!-- Contêiner esperado pelo bundle -->
+  <!-- criamos vários contêineres comuns + um root padrão -->
   <div id="root">Carregando…</div>
+  <div id="app" style="display:none"></div>
+  <div id="manus-root" style="display:none"></div>
 
-  <!-- Logs de diagnóstico -->
   <script>
-    window.addEventListener('error', e => console.error('[window.error]', e.message, e.filename, e.lineno, e));
-    window.addEventListener('unhandledrejection', e => console.error('[unhandledrejection]', e.reason));
-    console.log('[debug] index.html carregado em', location.href);
+    // ====== POLYFILLS / AMBIENTE ======
+    // Algumas libs esperam 'global' ou 'process.env'
+    window.global = window.global || window;
+    window.process = window.process || { env: {} };
+
+    // Garante que #root exista e esteja vazio (exigência do React 18)
+    (function ensureRoot() {
+      var r = document.getElementById('root');
+      if (!r) { r = document.createElement('div'); r.id = 'root'; document.body.appendChild(r); }
+      r.innerHTML = '';
+    })();
+
+    // Se o bundle procurar outro id, devolvemos #root como fallback
+    (function patchGetElementById(){
+      var _get = Document.prototype.getElementById;
+      Document.prototype.getElementById = function(id){
+        var el = _get.call(this, id);
+        return el || _get.call(this, 'root');
+      };
+    })();
   </script>
 
-  <!-- Importa o bundle da RAIZ (com cache-busting) e garante #root vazio -->
+  <!-- Import do bundle após o DOM estar pronto (com cache-busting) -->
   <script type="module">
-    const root = document.getElementById('root');
-    if (!root) {
-      const el = document.createElement('div');
-      el.id = 'root';
-      document.body.appendChild(el);
-      console.log('[debug] #root foi criado');
-    } else {
-      root.innerHTML = ''; // React createRoot exige vazio
-    }
+    const start = () => import('./index-CFG82D6X.js?v=' + Date.now())
+      .then(() => console.log('[ok] bundle importado'))
+      .catch(err => console.error('[erro] import bundle', err));
 
-    console.log('[debug] importando bundle…');
-    import('./index-CFG82D6X.js?v=' + Date.now())
-      .then(() => console.log('[debug] bundle importado OK'))
-      .catch(err => console.error('[debug] erro ao importar bundle', err));
+    if (document.readyState === 'loading')
+      document.addEventListener('DOMContentLoaded', start, { once:true });
+    else
+      start();
   </script>
 </body>
 </html>
