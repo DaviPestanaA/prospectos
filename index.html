@@ -1,14 +1,26 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Análise de Prospecção - Nutricionistas</title>
-    <script type="module" crossorigin src="/assets/index-CFG82D6X.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DYx4jXYy.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prospectos</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+  <noscript>Ative o JavaScript para ver este app.</noscript>
+  <style>html{visibility:hidden}</style>
+</head>
+<body>
+  <!-- container que o bundle deve usar -->
+  <div id="root"></div>
+
+  <script>
+    (function () {
+      // base correta mesmo em /usuario/repositorio/
+      var p = location.pathname;
+      var base = p.endsWith('/') ? p : p.slice(0, p.lastIndexOf('/') + 1);
+
+      // injeta CSS (com cache-busting) e revela a página
+      var css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = base + 'index-DYx4jXYy.css?v=' + Date.now();
+      css.onload = function(){ document.documentElement.style.visibility = 'visible'; };
+      css.onerror = function(){ document.documentElement.style.visibility = 'visible'; };
